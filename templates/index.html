@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+    {% load leaflet_tags %}
+<head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Our Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}"></script>
+    <style type="text/css">
+        #gis {width: 80; height:700px; }
+
+    </style>
+    
+</head>
+<body>
+    <h1>Cygen HealthTech Location Map</h1>
+    <br>
+        <script type="text/javascript">
+            function our_layers(map, options){
+                var datasets = new L.GeoJSON.AJAX(" {% url 'county' %}", {
+
+                    style: function colors(feature){
+                        switch(feature.properties.counties){
+                            case 'karnataka':
+                                return {
+                                    color : 'orange',
+                                    fillOpacity:0.8,
+                                };
+                            break;
+                            case 'west bengal':
+                                return {
+                                    color : 'purple',
+                                };
+                            break;
+
+                        }
+                    }
+                        
+
+
+                    }
+                    onEachFeature: function(feature, layer){
+                        layer.bindPopup(feature.properties.counties.toString());
+                    }
+                });
+
+                datasets.addTo[map];
+
+
+
+                var datasets = new L.GeoJSON.AJAX(" {% url 'incidences' %}", {
+                    onEachFeature: function(feature, layer){
+                        layer.bindPopup(feature.properties.name.toString());
+                    }
+                });
+
+                datasets.addTo[map];
+            }
+        </script>
+        {% leaflet_map "gis" callback = "window.our_layers" %}
+</body>
+</html>
